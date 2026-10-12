@@ -1,0 +1,56 @@
+
+# 1. Ping scan – discover live hosts
+nmap -sn 192.168.1.0/24
+
+# 2. Quick scan
+nmap -T4 -F 192.168.1.10
+
+# 3. Regular scan
+nmap 192.168.1.10
+
+# 4. Intense scan – OS, services, scripts, traceroute
+nmap -T4 -A 192.168.1.10
+
+# 5. Service version detection
+nmap -sV 192.168.1.10
+
+# 6. OS detection
+nmap -O 192.168.1.10
+
+# 7. Scan specific ports
+nmap -p 22,80,443 192.168.1.10
+
+# 8. Save results to a file
+nmap -oN output.txt 192.168.1.10
+
+import subprocess
+
+target = input("Enter authorized target IP: ")
+
+commands = [
+    ["nmap", "-sn", target],
+    ["nmap", "-F", target],
+    ["nmap", "-sV", "-O", target],
+    ["nmap", "-T4", "-A", target]
+]
+
+for command in commands:
+    print("\nRunning:", " ".join(command))
+
+    try:
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            timeout=300
+        )
+        print(result.stdout)
+
+        if result.stderr:
+            print("Messages:", result.stderr)
+
+    except FileNotFoundError:
+        print("Nmap is not installed or is not in PATH.")
+        break
+    except subprocess.TimeoutExpired:
+        print("Scan timed out.")
